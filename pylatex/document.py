@@ -12,6 +12,7 @@ import errno
 from .base_classes import Environment, Command, Container, LatexObject, \
     UnsafeCommand
 from .package import Package
+from .errors import CompilerError
 from .utils import dumps_list, rm_temp_dir, NoEscape
 import pylatex.config as cf
 
@@ -257,19 +258,22 @@ class Document(Environment):
                             # Use FileNotFoundError when python 2 is dropped
                             if e.errno != errno.ENOENT:
                                 raise
+                rm_temp_dir()
 
             if clean_tex:
                 os.remove(os.path.join(dest_dir, basename) + '.tex')  # Remove generated tex file
-
-            rm_temp_dir()
 
             # Compilation has finished, so no further compilers have to be
             # tried
             break
 
         else:
-            # If none of the compilers worked, raise the last error
-            raise (os_error)
+            # Notify user that none of the compilers worked.
+            raise(CompilerError(
+                'No LaTex compiler was found\n' +
+                'Either specify a LaTex compiler ' +
+                'or make sure you have latexmk or pdfLaTex installed.'
+            ))
 
     def _select_filepath(self, filepath):
         """Make a choice between ``filepath`` and ``self.default_filepath``.
