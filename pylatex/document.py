@@ -195,15 +195,13 @@ class Document(Environment):
         filepath = self._select_filepath(filepath)
         filepath = os.path.join('.', filepath)
 
-
         dest_dir = os.path.dirname(filepath)
         basename = os.path.basename(filepath)
 
         if basename == '':
             basename = 'default_basename'
 
-
-        self.generate_tex(os.path.join(dest_dir,basename))
+        self.generate_tex(os.path.join(dest_dir, basename))
 
         if compiler is not None:
             compilers = ((compiler, []),)
@@ -246,7 +244,7 @@ class Document(Environment):
                 try:
                     # Try latexmk cleaning first
                     subprocess.check_output(['latexmk', '-c', basename],
-                                            stderr=subprocess.STDOUT,cwd=dest_dir)
+                                            stderr=subprocess.STDOUT, cwd=dest_dir)
                 except (OSError, IOError, subprocess.CalledProcessError) as e:
                     # Otherwise just remove some file extensions.
                     extensions = ['aux', 'log', 'out', 'fls',
@@ -254,14 +252,14 @@ class Document(Environment):
 
                     for ext in extensions:
                         try:
-                            os.remove(os.path.join(dest_dir,basename) + '.' + ext)
+                            os.remove(os.path.join(dest_dir, basename) + '.' + ext)
                         except (OSError, IOError) as e:
                             # Use FileNotFoundError when python 2 is dropped
                             if e.errno != errno.ENOENT:
                                 raise
 
             if clean_tex:
-                os.remove(os.path.join(dest_dir ,basename) + '.tex')  # Remove generated tex file
+                os.remove(os.path.join(dest_dir, basename) + '.tex')  # Remove generated tex file
 
             rm_temp_dir()
 
@@ -271,9 +269,7 @@ class Document(Environment):
 
         else:
             # If none of the compilers worked, raise the last error
-            raise(os_error)
-
-
+            raise (os_error)
 
     def _select_filepath(self, filepath):
         """Make a choice between ``filepath`` and ``self.default_filepath``.
